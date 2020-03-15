@@ -8,15 +8,10 @@ def genetic_alg(individuo):
 ## fitness function é onde será avaliada a aptidão de cada indivíduo conforme a população dada 
 def fitness_function(populacao, individuo):
     aptidao = 0
-    nova_populacao = []
-    for indv in individuo:
-        for pop in populacao:
+    for pop in populacao:
+        for indv in individuo:
             if indv == pop:
                 aptidao = aptidao + 1
-                nova_populacao.append(aptidao)
-            else:
-                nova_populacao.append(aptidao)
-                
 
     
 
