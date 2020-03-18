@@ -1,0 +1,52 @@
+# coding=utf-8
+import time
+import sys
+
+## dynamic programming solution
+## time complexity: 
+# pior caso: O(nˆm)
+# melhor caso: Ω(1)
+# médio caso: Θ((nˆm)/2)
+def min_coin_change(coins, coins_vet_size, change):
+    # a variável table vai guardar sempre os valores mínimos até que a menor moeda seja encontrada
+    # table[i] will be storing the minimum  
+    # número de moedas para cada valor de i
+    # number of coins required for i value.
+    # Então a table[change] terá o resultado  
+    # So table[change] will have result 
+    table = [0 for i in range(change + 1)] 
+  
+    # Base case (If given value change is 0) 
+    # Caso base (se o valor da troca é zero)
+    table[0] = 0
+  
+    # Initialize all table values as Infinite 
+    # Inicializo todos os valores dessa table como infinito, uma vez que eu ainda não conheço os valores
+    for i in range(1, change + 1): 
+        table[i] = sys.maxsize 
+  
+    # Calcula o mínimo de moedas para todos os valores a partir de 1 para o troco
+    # Compute minimum coins required  
+    # for all values from 1 to change 
+    for i in range(1, change + 1): 
+
+        # percorre todas as moedas menores do que o valor de i      
+        # Go through all coins smaller than i
+        ## ESSE i TÁ ME DEIXANDO CONFUSA
+        for j in range(coins_vet_size):
+            if (coins[j] <= i):
+                sub_res = table[i - coins[j]] 
+                if (sub_res != sys.maxsize and 
+                    sub_res + 1 < table[i]): 
+                    table[i] = sub_res + 1
+    return table[change] 
+
+if __name__ == "__main__":
+    coins = [1, 5, 25, 21, 10]
+    vet_size = len(coins)
+    change = 63 ## troco estabelecido
+    start = time.time()
+    minimun_coin_to_change = min_coin_change(coins, vet_size, change)
+    end = time.time() - start
+    print(end)
+    print("A quantidade minima de moedas eh: " ,minimun_coin_to_change)

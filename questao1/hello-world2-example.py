@@ -5,18 +5,20 @@ import random, string
 def calc_fitness(source, target):
     aptidao = 0
 
-    for sc, tg in zip(source, target):
-        if sc == tg:
-            aptidao = aptidao+1
+    for i in range(0, len(source)):
+        ## ord() -> essa função retorna o número unicode do caracter passado como parâmetro
+        ## target é o meu vetor alvo (populacao final)
+        ## source é minha população inicial
+        ## a diferença entre os vetores elevado a 2
+        aptidao += (ord(target[i]) - ord(source[i])) ** 2
+        ## isso é pra não permitir números negativos
     return aptidao
 
 ## a mutação é onde são gerados novos indivíduos para uma nova avaliação de população ideal
 def mutate(parent1, parent2):
     child_dna = parent1['dna'][:]
 
-    # Aqui é onde é feito o crossover
     # Mix both DNAs
-    # escolhe randomicamente os indivíduos para fazer o crossover
     start = random.randint(0, len(parent2['dna']) - 1)
     stop = random.randint(0, len(parent2['dna']) - 1)
     if start > stop:
@@ -25,32 +27,23 @@ def mutate(parent1, parent2):
 
     # Mutate one position
     charpos = random.randint(0, len(child_dna) - 1)
-    child_dna[charpos] = child_dna[charpos] + random.randint(-1,1)
+    child_dna[charpos] = chr(ord(child_dna[charpos]) + random.randint(-1,1))
     child_fitness = calc_fitness(child_dna, target)
     return({'dna': child_dna, 'fitness': child_fitness})
 
-## Gera parentes randômicos
 def random_parent(genepool):
     wRndNr = random.random() * random.random() * (GENSIZE - 1)
+    wRndNr = int(wRndNr)
     return(genepool[wRndNr])
 
-def populacao_inicial():
-    populacao_inicial = []
-    for i in range(20):
-        populacao_inicial.append(random.randint(0,1))
-    return populacao_inicial
 
 if __name__ == "__main__":
-    target = [1, 0, 1, 0, 1, 0]
-    source = populacao_inicial()
+    target = "Hello, World!"
 
-    GENSIZE = source
+    GENSIZE = 20
     genepool = []
-    number =0
     for i in range(0, GENSIZE):
-        # dna = [j for j in range(0, len(target))]
-        for j in range(0, len(target)):
-            dna = j
+        dna = [random.choice(string.printable[:-5]) for j in range(0, len(target))]
         fitness = calc_fitness(dna, target)
         candidate = {'dna': dna, 'fitness': fitness }
         genepool.append(candidate)
@@ -70,5 +63,4 @@ if __name__ == "__main__":
         child = mutate(parent1, parent2)
         if child['fitness'] < genepool[-1]['fitness']:
             genepool[-1] = child
-        print(child)
-    print(child)
+        print(child)    

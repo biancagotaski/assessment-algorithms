@@ -1,0 +1,24 @@
+'''
+Versão em programação dinâmica.
+'''
+
+def min_moedas(valor, total_moedas, lista_moedas):
+    if sum(lista_moedas) == valor:
+        yield lista_moedas
+    elif sum(lista_moedas) > valor:
+        pass
+    elif total_moedas == []:
+        pass
+    else:
+        for moeda in min_moedas(valor, total_moedas[:], lista_moedas + [total_moedas[0]]):
+            yield moeda
+        for moeda in min_moedas(valor, total_moedas[1:], lista_moedas):
+            yield moeda
+valor = 11
+coins = [1, 5, 10, 21, 25]
+
+solucoes = [sol for sol in min_moedas(valor, coins, [])]
+resultado = min(solucoes, key=len)
+
+print('A menor quantidade de moedas é: ', len(resultado))
+print('As moedas são: ', resultado)
