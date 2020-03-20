@@ -1,5 +1,7 @@
 # coding=utf-8
 import random, string
+
+## REFERÊNCIA: https://www.electricmonk.nl/log/2011/09/28/evolutionary-algorithm-evolving-hello-world/  
     
 ## fitness function é onde será avaliada a aptidão de cada indivíduo conforme a população dada
 def calc_fitness(source, target):
@@ -14,8 +16,7 @@ def calc_fitness(source, target):
 def mutate(parent1, parent2):
     child_dna = parent1['dna'][:]
 
-    # Aqui é onde é feito o crossover
-    # Mix both DNAs
+    # Aqui é onde é feito o crossover (mistura de DNAs)
     # escolhe randomicamente os indivíduos para fazer o crossover
     start = random.randint(0, len(parent2['dna']) - 1)
     stop = random.randint(0, len(parent2['dna']) - 1)
