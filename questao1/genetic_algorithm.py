@@ -1,6 +1,8 @@
 # coding=utf-8
 import random, string
 
+## FALTA TRANSFORMAR DE STRINGS PARA VALORES INTEIROS
+
 ## REFERÊNCIA: https://www.electricmonk.nl/log/2011/09/28/evolutionary-algorithm-evolving-hello-world/  
     
 ## fitness function é onde será avaliada a aptidão de cada indivíduo conforme a população dada
