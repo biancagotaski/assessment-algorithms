@@ -7,91 +7,75 @@ import sys
 # Onde o algoritmo irá percorrer o vetor n vezes para o tamanho n do vetor de entrada.
 class Grafo(): 
   
-    ## método construtor que recebe o grafo e realiza um loop para as linhas e colunas
-    def __init__(self, vertices): 
-        self.V = vertices 
-        self.grafo = [[0 for column in range(vertices)]  
-                    for row in range(vertices)] 
+    def __init__(self, qtd_vertices): 
+        self.qtd_vertices = qtd_vertices 
+        self.grafo = [
+                [0 for col in range(qtd_vertices)] for lin in range(qtd_vertices)
+            ] 
   
-    ## exibe resultado no terminal
-    def mostra_resultado(self, dist): 
-        print("Vertice, Distancia do nó inicial ao nó final")
-        for node in range(self.V): 
-            print(node, dist[node])
+    ## Função que encontra o vértice com a distância de menor valor em relação ao vértice atual
+    ## mas que não necessariamente será a menor distância do resultado final.
+    def indc_vertice_menor_distancia(self, distancias, visitados): 
   
-    # A utility function to find the vertex with  
-    # minimum distance value, from the set of vertices  
-    # not yet included in shortest path tree 
+        ## inicializa a distância mínima para os vértices ainda não visitados (como se fosse o infinito, em python)
+        menor_val = sys.maxsize 
 
-    ## Função que encontra o vértice com a distância de menor valor
-    ## mas que não necessariamente será o menor caminho do resultado final.
-    def min_distancia(self, distancia, nova_distancia): 
+        for vertice_destino in range(self.qtd_vertices): 
+            if distancias[vertice_destino] < menor_val and visitados[vertice_destino] == False: 
+                menor_val = distancias[vertice_destino]
+                ## retorno o índice do vértice de menor valor (ou seja, mais próximo) em relação ao meu vértice atual 
+                indice_menor_val = vertice_destino 
   
-        # inicializa a mínima distância para o próximo nó (como se fosse o infinito, em python)
-        min = sys.maxint 
-  
-        # Search not nearest vertex not in the  
-        # shortest path tree 
+        return indice_menor_val 
 
-        # busca pelo vértice mais próximo dado os vértices passado por parâmetro
-        for v in range(self.V): 
-            if distancia[v] < min and nova_distancia[v] == False: 
-                min = distancia[v] 
-                min_indice = v 
+    def dijkstra(self, vertc_inicial): 
+        
+        #Cria o Vetor que armazena as distâncias de cada vértice em relação ao vértice inicial
+        ## e a primeira posição recebe o valor zero inicialmente, pois a distância do primeiro vértice para ele mesmo é zero.
+        distancias = [sys.maxsize] * self.qtd_vertices 
+        
+        distancias[vertc_inicial] = 0
+        ## Os vértices são inicializados como não visitados inicialmente
+        visitados = [False] * self.qtd_vertices
   
-        return min_indice 
-  
-    # Funtion that implements Dijkstra's single source  
-    # shortest path algorithm for a grafo represented  
-    # using adjacency matrix representation 
+        ## contando os vértices recebidos na entrada do algoritmo
+        for i in range(self.qtd_vertices):
 
-    ## função que implementa de fato o algoritmo de Dijkstra
-    ## para encontrar o menor caminho de um grafo, através do peso dos vértices
-    def dijkstra(self, src): 
+            #Vertice Atual é a linha da matriz
+            vertice_atual = self.indc_vertice_menor_distancia(distancias, visitados)
   
-        distancia = [sys.maxint] * self.V 
-        distancia[src] = 0
-        nova_distancia = [False] * self.V 
-  
-        for cout in range(self.V): 
-  
-            # Pick the minimum distance vertex from  
-            # the set of vertices not yet processed.  
-            # u is always equal to src in first iteration
+            ## o vértice atual já fica marcado como sendo visitado
+            visitados[vertice_atual] = True
+            print("{}{}{}".format("Vertice ", vertice_atual, " acabou de ser visitado."))
 
-            # verifica a menor distância de um vértice dado os nós próximo ao nó corrente
-            # onde na primeira iteração u será igual a distância do nó inicial
-            u = self.min_distancia(distancia, nova_distancia) 
-  
-            # Put the minimum distance vertex in the  
-            # shotest path tree 
-            nova_distancia[u] = True
-  
-            # Update dist value of the adjacent vertices  
-            # of the picked vertex only if the current  
-            # distance is greater than new distance and 
-            # the vertex in not in the shotest path tree
-            # 
-            ## atualiza o valor da distância dos vértices adjacentes
-            ## verifica se a distância atual é maior do que a nova distância 
-            ## e se o algoritmo está seguindo pelo menor caminho 
-            for v in range(self.V): 
-                if self.grafo[u][v] > 0 and nova_distancia[v] == False and distancia[v] > distancia[u] + self.grafo[u][v]: 
-                        distancia[v] = distancia[u] + self.grafo[u][v] 
-  
-        self.mostra_resultado(distancia) 
+            for vertice_destino in range(self.qtd_vertices):
+                peso_aresta = self.grafo[vertice_atual][vertice_destino]
+                #Se o peso_aresta for igual a ZERO significa que não existe essa aresta
+                if peso_aresta == 0:
+                    continue #Ignoro essa aresta
+                #Se o vertice de destino (onde a aresta me leva) não foi visitado
+                #e a distância do vértice de destino em relação ao inicial é maior que 
+                #a distância do vértice atual somado ao peso da aresta, atualizo a nova distância do vértice de destino
+                if visitados[vertice_destino] == False and distancias[vertice_atual] + peso_aresta < distancias[vertice_destino] :
+                        distancias[vertice_destino] = distancias[vertice_atual] + peso_aresta
+        
+        self.mostra_resultado(distancias) 
+
+    def mostra_resultado(self, dist):
+        print("\nVertice | distancias do vértice inicial aos vértices encontrados no grafo")
+        for vertc in range(self.qtd_vertices):
+            print(vertc, dist[vertc])
   
 if __name__ == "__main__":
-    g = Grafo(9) 
-    g.grafo = [[0, 4, 0, 0, 0, 0, 0, 8, 0], 
-        [4, 0, 8, 0, 0, 0, 0, 11, 0], 
-        [0, 8, 0, 7, 0, 4, 0, 0, 2], 
-        [0, 0, 7, 0, 9, 14, 0, 0, 0], 
-        [0, 0, 0, 9, 0, 10, 0, 0, 0], 
-        [0, 0, 4, 14, 10, 0, 2, 0, 0], 
-        [0, 0, 0, 0, 0, 2, 0, 1, 6], 
-        [8, 11, 0, 0, 0, 0, 1, 0, 7], 
-        [0, 0, 2, 0, 0, 0, 6, 7, 0] 
+    ## quantidade de vértices que o algoritmo irá receber
+    g = Grafo(5)
+    ## matriz adjacente
+    g.grafo = [
+        [0, 2, 0, 0, 0], 
+        [2, 0, 5, 1, 0], 
+        [0, 5, 0, 7, 0], 
+        [0, 1, 7, 0, 3], 
+        [0, 0, 0, 3, 0]
         ]; 
-
-    g.dijkstra(0); 
+    ## definindo o vértice inicial
+    g.dijkstra(0)

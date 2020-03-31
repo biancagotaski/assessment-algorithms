@@ -92,3 +92,5 @@ if __name__ == "__main__":
 
     print('vetor de entrada', v)
     print('vetor ordenado', Quick(v).sort())
+
+## THIS = SELF
