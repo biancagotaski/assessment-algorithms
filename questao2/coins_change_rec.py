@@ -1,44 +1,60 @@
 # coding=utf-8
-import time, sys, datetime
+import sys
 
-## Coin Change Resolvido Recursão e Força Bruta (demora MUITO)
+#Meu algoritmo apresentado na última aula demorava MUITO porque era 
+#um algoritmo RECURSIVO de FORÇA BRUTA e NÃO GULOSO.
+#Todas as possibilidades eram testadas.
+
+## Coin Change resolvido com recursão e abordagem gulosa 
+# A abordagem gulosa não funciona em todas as combinações de valores e moedas.
+
+#Exemplo que funciona
+# Troco desejado: R$50 centavos
+# Moedas disponiveis: (30, 20, 10, 1)
+# No exemplo acima é possível gerar o valor 50 tentando usar as moedas de maior valor.
+# 30 + 20, sendo esta a resposta correta.
+# 
+# Exemplo que NÃO funciona
+# Troco desejado R$63 centavos
+#[1, 5, 25, 21, 10] => [25, 21, 10, 5, 1]
+# O algoritmo vai tentar manter as moedas de maior valor, gerando o resultado:
+# 25 + 25 + 10 + 1 + 1 + 1 => 6 moedas
+#Esse não é o resultado correto.
+#Deveria ser 21 + 21 + 21 => 3 moedas
 ## Complexidade de Tempo: 
 # pior caso: O(nˆm)
 # melhor caso: Ω(1)
 # médio caso: Θ((nˆm)/2)
-def realiza_troco(moedas, moedas_vet_tam, troco):
-    ## caso base para que a função não entre em loop
+
+def coinchange_recursivo_guloso(moedas, troco):
+    moedas.sort(reverse=True) #Ordeno de forma decrescente (abordagem GULOSA)
+    return _coinchange(moedas, troco)
+    
+def _coinchange(moedas, troco):
+    ## caso base: Conseguiu ua combinação de Moedas que represenye o troco
     if (troco == 0): 
         return 0
-  
-    # Inicializa o resultado (inicialmente tem o máximo de valor possível porque ainda vamos descobrir o resultado)
-    resultado = sys.maxsize 
-      
+    
+    resultado = -1 #Caso não consiga encontrar combinação que funcione, retorno -1
+
     # percorre cada moeda e verifica se a moeda atual é menor ou igual ao troco
-    for i in range(0, moedas_vet_tam):
-        if (moedas[i] <= troco): 
-            # sub_res recebe o valor que é gerado pela recursão desta função.
-            # que recebe como parâmetro o vetor de moedas, o tamanho do vetor e o calculo
-            # que é a diferença entre o troco e a moeda corrente
-            # por exemplo, na primeira vez deste loop
-            # 63 - 1 = 62 => sub_res = 62
-            sub_res = realiza_troco(moedas, moedas_vet_tam, troco - moedas[i]) 
-  
-            # Logo esse sub_res será menor do que o máximo permitido e se for menor do que o resultado final, 
-            # o resultado final passará a ter o valor do sub resultado
-            if (sub_res != sys.maxsize and sub_res + 1 < resultado): 
-                resultado = sub_res + 1
-                print("sub_res", sub_res)
-  
+    for i in range(0, len(moedas)):
+        if (moedas[i] <= troco):
+            resultado = _coinchange(moedas, troco - moedas[i]) 
+
+            #Caso não tenha sido encontrado moeda menor que o troco
+            #Ex: Não existe moeda de valor "1" e o troco necessário é 1
+            #o retorno da chamada recursiva é "-1" (impossível gerar troco) e isso é passado adiante.
+            if resultado == -1:
+                return resultado
+            
+            ##Retorno padrão que contabiliza a quantidade de moedas usadas até então
+            return resultado + 1
+
     return resultado 
 
 if __name__ == "__main__":
     moedas = [1, 5, 25, 21, 10]
-    vet_tam = len(moedas)
     troco = 63
-    start = time.time()
-    qtde_min_moedas = realiza_troco(moedas, vet_tam, troco)
-    end = time.time() - start
-    end_execution = str(datetime.timedelta(seconds=end))
-    print(end_execution)
-    print("A quantidade minima de moedas eh: " , qtde_min_moedas)
+    qtde_min_moedas = coinchange_recursivo_guloso(moedas, troco)
+    print("A quantidade minima de moedas eh {}".format(qtde_min_moedas))
